@@ -54,7 +54,6 @@ public class ColorGame {
 
         String command = "";
 
-        //TODO: Implement logic to append to interested things list and remove the same. For now it contains all the things by default
         //TODO: Also handle the frog and ink exception
 
         while(!command.equals("exit")){
