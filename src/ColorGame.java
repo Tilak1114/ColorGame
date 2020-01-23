@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,11 +17,14 @@ public class ColorGame {
     static Thing salt = new Thing("salt");
     static Thing ink = new Thing("ink");
     static Thing banana = new Thing("banana");
-    static Thing sun = new Thing("Sun");
+    static Thing sun = new Thing("sun");
     static Thing sugar = new Thing("sugar");
     static Thing frog = new Thing("frog");
 
+    static HashMap<String, Thing> strThingMap = new HashMap<>();
+
     static List<Color> colors = new ArrayList<>();
+    static List<Thing> allThings = new ArrayList<>();
 
     public static void main(String[] args){
 
@@ -32,9 +36,14 @@ public class ColorGame {
         colors.add(green);
         colors.add(red);
 
+        allThings.add(sun);
+        allThings.add(salt);
+        allThings.add(sugar);
+        allThings.add(banana);
+
         interestedThingsList.add(salt);
         interestedThingsList.add(banana);
-        interestedThingsList.add(sun);
+        //interestedThingsList.add(sun);
         interestedThingsList.add(sugar);
 
         /* interestedThingsList here is the dynamic list of things that get added with + and subtracted with -.
@@ -43,15 +52,17 @@ public class ColorGame {
 
         defaultSetup();
 
-        System.out.println("Enter Command");
-
-        String command = scanner.nextLine();
+        String command = "";
 
         //TODO: Implement logic to append to interested things list and remove the same. For now it contains all the things by default
         //TODO: Also handle the frog and ink exception
-        Boolean shouldExit = false;
 
-        while(!shouldExit){
+        while(!command.equals("exit")){
+
+            System.out.println("\nEnter Command");
+
+            command = scanner.nextLine();
+
             if(command.equals("white"))
                 white.getThingsOfColor("white", interestedThingsList);
 
@@ -66,12 +77,48 @@ public class ColorGame {
 
             else if(command.equals("green"))
                 green.getThingsOfColor("green", interestedThingsList);
-            else if(command.equals("exit"))
-                shouldExit = true;
+
+            else if(command.substring(0, 1).equals("+")){
+                String objectName = command.substring(1);
+                boolean exists = false;
+                for(int i=0; i<interestedThingsList.size(); i++){
+                    if(interestedThingsList.get(i).getName().equals(command.substring(1))){
+                        exists = true;
+                    }
+                }
+                if(!exists)
+                    interestedThingsList.add(strThingMap.get(objectName));
+            }
+
+            else if(command.substring(0, 1).equals("-")){
+                String objectName = command.substring(1);
+                boolean exists = false;
+                for(int i=0; i<interestedThingsList.size(); i++){
+                    if(interestedThingsList.get(i).getName().equals(command.substring(1))){
+                        exists = true;
+                    }
+                }
+                if(exists)
+                    interestedThingsList.remove(strThingMap.get(objectName));
+            }
+
+            else if(command.equals("list")){
+                for(int i=0; i<interestedThingsList.size(); i++){
+                    System.out.println(interestedThingsList.get(i).getName());
+                }
+            }
+
+            else
+                System.out.println("Doesnt support "+ command);
         }
     }
 
     public static void defaultSetup(){
+
+        strThingMap.put("sun", sun);
+        strThingMap.put("salt", salt);
+        strThingMap.put("sugar", sugar);
+        strThingMap.put("banana", banana);
 
         //salt
         salt.subscribeToColor(white);
@@ -91,8 +138,6 @@ public class ColorGame {
         //sun
         sun.subscribeToColor(red);
         sugar.subscribeToColor(yellow);
-
-
 
 
         white.bindThingToColor(salt);
